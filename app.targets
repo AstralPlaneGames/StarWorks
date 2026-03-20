@@ -1,0 +1,8 @@
+<Project>
+    <ItemGroup>
+        <Files Include="$(MSBuildThisFileDirectory)/../content/*.*" />
+    </ItemGroup>
+    <Target Name="CopyFiles" AfterTargets="Build" Condition="!$(TargetFramework.Contains('android')) AND !$(TargetFramework.Contains('ios')) AND !$(TargetFramework.Contains('tvos'))">
+        <Copy SourceFiles="@(Files)" DestinationFolder="$(TargetDir)" />
+    </Target>
+</Project>

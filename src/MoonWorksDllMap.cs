@@ -77,6 +77,14 @@ namespace MoonWorks
 			return NativeLibrary.Load(mappedName, assembly, dllImportSearchPath);
 		}
 
+		private static IntPtr LoadStaticLibrary(
+			string libraryName,
+			Assembly assembly,
+			DllImportSearchPath? dllImportSearchPath
+		) {
+			return NativeLibrary.GetMainProgramHandle();
+		}
+
 		#endregion
 
 		#region Module Initializer
@@ -84,9 +92,19 @@ namespace MoonWorks
 		[ModuleInitializer]
 		public static void Init()
 		{
-			// Ignore NativeAOT platforms since they don't perform dynamic loading.
-			if (!RuntimeFeature.IsDynamicCodeSupported)
+			if (!RuntimeFeature.IsDynamicCodeCompiled)
 			{
+				/* NativeAOT platforms don't perform dynamic loading,
+				 * so setting a DllImportResolver is unnecessary.
+				 *
+				 * However, iOS and tvOS with Mono AOT statically link
+				 * their dependencies, so we need special handling for them.
+				 */
+				if (OperatingSystem.IsIOS() || OperatingSystem.IsTvOS())
+				{
+					NativeLibrary.SetDllImportResolver(Assembly.GetExecutingAssembly(), LoadStaticLibrary);
+				}
+
 				return;
 			}
 
@@ -102,7 +120,7 @@ namespace MoonWorks
 			// Locate the config file
 			string xmlPath = Path.Combine(
 				assemblyPath,
-				"MoonWorks.dll.config"
+				assembly.GetName().Name + ".dll.config"
 			);
 			if (!File.Exists(xmlPath))
 			{

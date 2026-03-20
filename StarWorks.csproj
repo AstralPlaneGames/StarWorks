@@ -74,10 +74,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Include="MoonWorks.dll.config">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-			<CopyToPublishDirectory>Never</CopyToPublishDirectory>
-		</None>
+		<None Include="app.config" Pack="true" PackagePath="content/$(AssemblyName).dll.config" />
+		<None Include="app.targets" Pack="true" PackagePath="build/$(AssemblyName).targets;buildTransitive/$(AssemblyName).targets" />
 	</ItemGroup>
 
 	<ItemGroup>
