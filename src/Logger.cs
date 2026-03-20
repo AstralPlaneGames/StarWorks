@@ -11,25 +11,37 @@ namespace MoonWorks
 
 		private static void LogInfoDefault(string str)
 		{
+#if WINDOWS || LINUX || OSX
 			Console.ForegroundColor = ConsoleColor.Green;
+#endif
 			Console.Write("INFO: ");
+#if WINDOWS || LINUX || OSX
 			Console.ForegroundColor = ConsoleColor.White;
+#endif
 			Console.WriteLine(str);
 		}
 
 		private static void LogWarnDefault(string str)
 		{
+#if WINDOWS || LINUX || OSX
 			Console.ForegroundColor = ConsoleColor.Yellow;
+#endif
 			Console.Write("WARN: ");
+#if WINDOWS || LINUX || OSX
 			Console.ForegroundColor = ConsoleColor.White;
+#endif
 			Console.WriteLine(str);
 		}
 
 		private static void LogErrorDefault(string str)
 		{
+#if WINDOWS || LINUX || OSX
 			Console.ForegroundColor = ConsoleColor.Red;
+#endif
 			Console.Write("ERROR: ");
+#if WINDOWS || LINUX || OSX
 			Console.ForegroundColor = ConsoleColor.White;
+#endif
 			Console.WriteLine(str);
 		}
 

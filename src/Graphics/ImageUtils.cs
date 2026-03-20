@@ -14,16 +14,15 @@ public static class ImageUtils
 	/// </summary>
 	public static unsafe byte* GetPixelDataFromBytes(
 		ReadOnlySpan<byte> data,
-		out uint width,
-		out uint height,
-		out uint sizeInBytes
+		out int width,
+		out int height,
+		out int sizeInBytes
 	) {
 		fixed (byte* ptr = data)
 		{
 			var pixelData =
-				IRO.IRO_LoadImage(
-				(nint) ptr,
-				(uint) data.Length,
+				StarWorks.IRO.LoadImage(
+				data,
 				out var w,
 				out var h,
 				out var len
@@ -45,9 +44,9 @@ public static class ImageUtils
 	public static unsafe byte* GetPixelDataFromFile(
 		TitleStorage storage,
 		string path,
-		out uint width,
-		out uint height,
-		out uint sizeInBytes
+		out int width,
+		out int height,
+		out int sizeInBytes
 	) {
 		width = 0;
 		height = 0;
@@ -82,17 +81,16 @@ public static class ImageUtils
 		fixed (byte* ptr = data)
 		{
 			var result =
-				IRO.IRO_GetImageInfo(
-				(nint) ptr,
-				(uint) data.Length,
+				StarWorks.IRO.GetImageInfo(
+				data,
 				out var w,
 				out var h,
 				out var len
 			);
 
-			width = w;
-			height = h;
-			sizeInBytes = len;
+			width = (uint)w;
+			height = (uint)h;
+			sizeInBytes = (uint)len;
 
 			return result;
 		}
@@ -135,26 +133,26 @@ public static class ImageUtils
 	/// </summary>
 	public unsafe static void FreePixelData(byte* pixels)
 	{
-		IRO.IRO_FreeImage((nint) pixels);
+		StarWorks.IRO.FreeBuffer((nint)pixels);
 	}
 
 	/// <summary>
 	/// Encodes pixel data to a PNG buffer.
 	/// You must call FreePNGBuffer when you are done with the data.
 	/// </summary>
-	public static unsafe IntPtr EncodePNGBuffer(
+	public static unsafe nint EncodePNGBuffer(
 		Span<Color> pixels,
-		uint width,
-		uint height,
+		int width,
+		int height,
 		bool bgra,
 		out int size
 	) {
-		IntPtr pngBuffer;
+		nint pngBuffer;
 
 		if (bgra)
 		{
-			var bgraPtr = NativeMemory.Alloc(width * height * 4);
-			var bgraColors = new Span<Color>(bgraPtr, (int) (width * height * 4));
+			var bgraPtr = NativeMemory.Alloc((nuint)(width * height * 4));
+			var bgraColors = new Span<Color>(bgraPtr, width * height * 4);
 			for (var i = 0; i < width * height; i += 1)
 			{
 				bgraColors[i].R = pixels[i].B;
@@ -163,14 +161,14 @@ public static class ImageUtils
 				bgraColors[i].A = pixels[i].A;
 			}
 
-			pngBuffer = IRO.IRO_EncodePNG((nint) bgraPtr, width, height, out size);
+			pngBuffer = StarWorks.IRO.EncodePNG(new ReadOnlySpan<byte>(bgraPtr, width * height * 4), width, height, out size);
 			NativeMemory.Free(bgraPtr);
 		}
 		else
 		{
 			fixed (Color* pixelPtr = pixels)
 			{
-				pngBuffer = IRO.IRO_EncodePNG((nint) pixelPtr, width, height, out size);
+				pngBuffer = StarWorks.IRO.EncodePNG(new ReadOnlySpan<byte>(pixelPtr, width * height * 4), width, height, out size);
 			}
 		}
 
@@ -187,15 +185,12 @@ public static class ImageUtils
 	/// <param name="compressionLevel">1 is highest speed, 9 is highest compression factor.</param>
 	/// <param name="compressedLength">Filled with the length of the encoded data.</param>
 	/// <returns></returns>
-	public static unsafe IntPtr Compress(
+	public static nint Compress(
 		ReadOnlySpan<byte> buffer,
 		int compressionLevel,
-		out uint compressedLength
+		out int compressedLength
 	) {
-		fixed (byte *ptr = buffer)
-		{
-			return IRO.IRO_Compress((nint) ptr, (uint) buffer.Length, compressionLevel, out compressedLength);
-		}
+		return StarWorks.IRO.Compress(buffer, compressionLevel, out compressedLength);
 	}
 
 	/// <summary>
@@ -205,22 +200,18 @@ public static class ImageUtils
 	/// Returns IntPtr.Zero if decompression failed.
 	/// </summary>
 	/// <param name="compressedData">A span of zlib-encoded data.</param>
-	/// <param name="decompressedLength">Filled with the length of the decoded data.</param>
-	/// <returns></returns>
-	public static unsafe bool Decompress(
+	/// <param name="destination">A buffer to write the decoded data into.</param>
+	/// <returns>True if decompression succeeded, false otherwise.</returns>
+	public static bool Decompress(
 		ReadOnlySpan<byte> compressedData,
-		ReadOnlySpan<byte> destination
+		Span<byte> destination
 	) {
-		fixed (byte *src = compressedData)
-		fixed (byte *dest = destination)
-		{
-			return IRO.IRO_Decompress((nint) src, (nint) dest, (uint) compressedData.Length, (uint) destination.Length);
-		}
+		return StarWorks.IRO.Decompress(compressedData, destination);
 	}
 
-	public static unsafe void FreeBufferData(IntPtr buffer)
+	public static void FreeBufferData(nint buffer)
 	{
-		IRO.IRO_FreeBuffer(buffer);
+		StarWorks.IRO.FreeBuffer(buffer);
 	}
 
 	// DDS loading extension, based on MojoDDS

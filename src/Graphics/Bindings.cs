@@ -1636,94 +1636,94 @@ internal static partial class SDL_GPU
 	public static partial uint SDL_CalculateGPUTextureFormatSize(TextureFormat format, uint width, uint height, uint depth);
 }
 
-internal static partial class IRO
-{
-	const string nativeLibName = "IRO";
-
-	[LibraryImport(nativeLibName)]
-	[UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-	public static partial IntPtr IRO_LoadImage(
-		IntPtr bufferPtr,
-		uint bufferLength,
-		out uint w,
-		out uint h,
-		out uint len
-	);
-
-	[LibraryImport(nativeLibName)]
-	[UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-	public static partial SDLBool IRO_GetImageInfo(
-		IntPtr bufferPtr,
-		uint bufferLength,
-		out uint w,
-		out uint h,
-		out uint len
-	);
-
-	[LibraryImport(nativeLibName)]
-	[UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-	public static partial void IRO_FreeImage(IntPtr mem);
-
-	[LibraryImport(nativeLibName)]
-	[UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-	public static partial IntPtr IRO_EncodePNG(
-		IntPtr data,
-		uint w,
-		uint h,
-		out int size
-	);
-
-	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-	public delegate void IRO_WriteFunc(
-		IntPtr context,
-		IntPtr data,
-		int size
-	);
-
-	[LibraryImport(nativeLibName)]
-	[UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-	public static partial SDLBool IRO_WritePNG(
-		IRO_WriteFunc writeFunc,
-		IntPtr context,
-		IntPtr data,
-		uint w,
-		uint h
-	);
-
-	[LibraryImport(nativeLibName)]
-	[UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-	public static partial SDLBool IRO_WritePNG(
-		IRO_WriteFunc writeFunc,
-		IntPtr context,
-		Span<Color> data,
-		uint w,
-		uint h
-	);
-
-	[LibraryImport(nativeLibName)]
-	[UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-	public static partial IntPtr IRO_Compress(
-		IntPtr data,
-		uint dataLength,
-		int compressionLevel,
-		out uint outLength
-	);
-
-	[LibraryImport(nativeLibName)]
-	[UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-	public static partial SDLBool IRO_Decompress(
-		IntPtr encodedBuffer,
-		IntPtr decodedBuffer,
-		uint encodedLength,
-		uint decodedLength
-	);
-
-	[LibraryImport(nativeLibName)]
-	[UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-	public static partial void IRO_FreeBuffer(
-		IntPtr buffer
-	);
-}
+//internal static partial class IRO
+//{
+//	const string nativeLibName = "IRO";
+//
+//	[LibraryImport(nativeLibName)]
+//	[UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+//	public static partial IntPtr IRO_LoadImage(
+//		IntPtr bufferPtr,
+//		uint bufferLength,
+//		out uint w,
+//		out uint h,
+//		out uint len
+//	);
+//
+//	[LibraryImport(nativeLibName)]
+//	[UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+//	public static partial SDLBool IRO_GetImageInfo(
+//		IntPtr bufferPtr,
+//		uint bufferLength,
+//		out uint w,
+//		out uint h,
+//		out uint len
+//	);
+//
+//	[LibraryImport(nativeLibName)]
+//	[UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+//	public static partial void IRO_FreeImage(IntPtr mem);
+//
+//	[LibraryImport(nativeLibName)]
+//	[UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+//	public static partial IntPtr IRO_EncodePNG(
+//		IntPtr data,
+//		uint w,
+//		uint h,
+//		out int size
+//	);
+//
+//	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+//	public delegate void IRO_WriteFunc(
+//		IntPtr context,
+//		IntPtr data,
+//		int size
+//	);
+//
+//	[LibraryImport(nativeLibName)]
+//	[UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+//	public static partial SDLBool IRO_WritePNG(
+//		IRO_WriteFunc writeFunc,
+//		IntPtr context,
+//		IntPtr data,
+//		uint w,
+//		uint h
+//	);
+//
+//	[LibraryImport(nativeLibName)]
+//	[UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+//	public static partial SDLBool IRO_WritePNG(
+//		IRO_WriteFunc writeFunc,
+//		IntPtr context,
+//		Span<Color> data,
+//		uint w,
+//		uint h
+//	);
+//
+//	[LibraryImport(nativeLibName)]
+//	[UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+//	public static partial IntPtr IRO_Compress(
+//		IntPtr data,
+//		uint dataLength,
+//		int compressionLevel,
+//		out uint outLength
+//	);
+//
+//	[LibraryImport(nativeLibName)]
+//	[UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+//	public static partial SDLBool IRO_Decompress(
+//		IntPtr encodedBuffer,
+//		IntPtr decodedBuffer,
+//		uint encodedLength,
+//		uint decodedLength
+//	);
+//
+//	[LibraryImport(nativeLibName)]
+//	[UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+//	public static partial void IRO_FreeBuffer(
+//		IntPtr buffer
+//	);
+//}
 
 internal static partial class SDL_ShaderCross
 {
