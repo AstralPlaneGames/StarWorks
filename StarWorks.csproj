@@ -11,6 +11,8 @@
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<AssemblyName>StarWorks</AssemblyName>
 		<RootNamespace>MoonWorks</RootNamespace>
+		<DebugType>portable</DebugType>
+		<DebugSymbols>true</DebugSymbols>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(TargetFramework)' == 'net9.0-windows10.0.26100.0'">
@@ -28,8 +30,13 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<PackageProjectUrl>https://github.com/FNA-NET/FNA</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/FNA-NET/FNA</RepositoryUrl>
+		<PackageProjectUrl>https://github.com/AstralPlaneGames/StarWorks</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/AstralPlaneGames/StarWorks</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<Authors>ryancheung</Authors>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
@@ -57,6 +64,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
 		<PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
 	</ItemGroup>
 
