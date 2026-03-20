@@ -1,4 +1,4 @@
-﻿using SDL3;
+using SDL3;
 using MoonWorks.Audio;
 using MoonWorks.Graphics;
 using MoonWorks.Input;
@@ -643,6 +643,10 @@ namespace MoonWorks
 
 			if ((SDL.SDL_EventType) evt->type == SDL.SDL_EventType.SDL_EVENT_WINDOW_EXPOSED)
 			{
+				var window = Window.Lookup(evt->window.windowID);
+				if (window != MainWindow)
+					Inputs.Keyboard.Reset();
+
 				Tick(false);
 				return false;
 			}

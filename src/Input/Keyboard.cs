@@ -219,5 +219,20 @@ namespace MoonWorks.Input
 		/// Gets the state of a keyboard button from a keycode.
 		/// </summary>
 		public ButtonState ButtonState(KeyCode keycode) =>  ButtonState(FromKeyCode(keycode));
+
+		public void Reset()
+		{
+			var scanCodes = Enum.GetValues<ScanCode>();
+			foreach (var scancode in scanCodes)
+			{
+				var button = new KeyboardButton(this, scancode);
+				Keys[(int) scancode] = button;
+			}
+
+			for (var i = 0; i < Keys.Length; i += 1)
+			{
+				ButtonEvents[i] = [];
+			}
+		}
 	}
 }
