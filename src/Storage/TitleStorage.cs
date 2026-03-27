@@ -13,6 +13,9 @@ public class TitleStorage : IDisposable
 
 	private bool IsDisposed;
 
+	// On Android, assets are accessed via SDL_IOFromFile rather than the storage API.
+	private static readonly bool IsAndroid = SDL.SDL_GetPlatform() == "Android";
+
 	/// <summary>
 	/// Opens a read-only container for the application's filesystem.
 	/// Note that RootTitleStorage is provided by the Game class - you don't have to create one.
@@ -32,7 +35,15 @@ public class TitleStorage : IDisposable
     /// <returns>True if the file exists, false otherwise.</returns>
     public bool Exists(string path)
     {
+		if (IsAndroid)
+		{
+			if (!TryOpenAndroidIO(path, out var io))
+				return false;
+			SDL.SDL_CloseIO(io);
+			return true;
+		}
         // FIXME: is it possible to pass null to the out var here?
+
         return SDL.SDL_GetStoragePathInfo(Handle, path, out var _);
     }
 
@@ -44,6 +55,29 @@ public class TitleStorage : IDisposable
     /// <returns>True if the query succeeded, false otherwise.</returns>
     public bool GetFileSize(string path, out ulong size)
     {
+        if (IsAndroid)
+        {
+            if (!TryOpenAndroidIO(path, out var io))
+            {
+                Logger.LogError($"File at {path} failed to load: {SDL.SDL_GetError()}");
+                size = 0;
+                return false;
+            }
+
+            var ioSize = SDL.SDL_GetIOSize(io);
+            SDL.SDL_CloseIO(io);
+
+            if (ioSize < 0)
+            {
+                Logger.LogError($"File at {path} failed to get size: {SDL.SDL_GetError()}");
+                size = 0;
+                return false;
+            }
+
+            size = (ulong) ioSize;
+            return true;
+        }
+
         if (!SDL.SDL_GetStorageFileSize(Handle, path, out size))
         {
             Logger.LogError($"File at {path} failed to load: {SDL.SDL_GetError()}");
@@ -61,6 +95,28 @@ public class TitleStorage : IDisposable
 	/// <returns>True on success, false on failure.</returns>
 	public unsafe bool ReadFile(string path, Span<byte> span)
 	{
+		if (IsAndroid)
+		{
+			if (!TryOpenAndroidIO(path, out var io))
+			{
+				Logger.LogError($"File at {path} failed to load: {SDL.SDL_GetError()}");
+				return false;
+			}
+
+			fixed (byte* ptr = span)
+			{
+				var bytesRead = SDL.SDL_ReadIO(io, (nint) ptr, (nuint) span.Length);
+				SDL.SDL_CloseIO(io);
+				if ((ulong) bytesRead != (ulong) span.Length)
+				{
+					Logger.LogError($"File at {path} failed to load: {SDL.SDL_GetError()}");
+					return false;
+				}
+			}
+
+			return true;
+		}
+
 		fixed (byte* ptr = span)
 		{
 			if (!SDL.SDL_ReadStorageFile(Handle, path, (nint) ptr, (ulong) span.Length))
@@ -71,6 +127,12 @@ public class TitleStorage : IDisposable
 		}
 
 		return true;
+	}
+
+	private static bool TryOpenAndroidIO(string path, out IntPtr io)
+	{
+		io = SDL.SDL_IOFromFile(path, "rb");
+		return io != IntPtr.Zero;
 	}
 
 	/// <summary>
