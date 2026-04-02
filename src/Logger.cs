@@ -51,6 +51,9 @@ namespace MoonWorks
 			SDL3.SDL.SDL_SetLogOutputFunction(SDLLog, IntPtr.Zero);
 		}
 
+#if IOS
+		[ObjCRuntime.MonoPInvokeCallback(typeof(SDL3.SDL.SDL_LogOutputFunction))]
+#endif
 		internal static unsafe void SDLLog(IntPtr userdata, int category, SDL3.SDL.SDL_LogPriority priority, byte* message)
 		{
 			if (priority == SDL3.SDL.SDL_LogPriority.SDL_LOG_PRIORITY_INFO)
