@@ -126,7 +126,7 @@ namespace MoonWorks.Graphics
 		/// <summary>
 		/// Creates a shader for any backend from SPIRV bytecode.
 		/// </summary>
-		internal static unsafe Shader CreateFromSPIRV(
+		public static unsafe Shader CreateFromSPIRV(
 			GraphicsDevice device,
 			string name, // can be null
 			ReadOnlySpan<byte> span,
