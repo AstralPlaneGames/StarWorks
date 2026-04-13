@@ -178,7 +178,6 @@ namespace MoonWorks.Graphics
 					{
 						Name = InteropUtilities.DecodeFromCString(metadata->Inputs[i].Name, 64),
 						Location = metadata->Inputs[i].Location,
-						Offset = metadata->Inputs[i].Offset,
 						VectorType = (IOVarType) metadata->Inputs[i].VectorType,
 						VectorSize = metadata->Inputs[i].VectorSize
 					};
@@ -191,7 +190,6 @@ namespace MoonWorks.Graphics
 					{
 						Name = InteropUtilities.DecodeFromCString(metadata->Outputs[i].Name, 64),
 						Location = metadata->Outputs[i].Location,
-						Offset = metadata->Outputs[i].Offset,
 						VectorType = (IOVarType) metadata->Outputs[i].VectorType,
 						VectorSize = metadata->Outputs[i].VectorSize
 					};
@@ -310,7 +308,6 @@ namespace MoonWorks.Graphics
 					{
 						Name = InteropUtilities.DecodeFromCString(metadata->Inputs[i].Name, 64),
 						Location = metadata->Inputs[i].Location,
-						Offset = metadata->Inputs[i].Offset,
 						VectorType = (IOVarType) metadata->Inputs[i].VectorType,
 						VectorSize = metadata->Inputs[i].VectorSize
 					};
@@ -323,7 +320,6 @@ namespace MoonWorks.Graphics
 					{
 						Name = InteropUtilities.DecodeFromCString(metadata->Outputs[i].Name, 64),
 						Location = metadata->Outputs[i].Location,
-						Offset = metadata->Outputs[i].Offset,
 						VectorType = (IOVarType) metadata->Outputs[i].VectorType,
 						VectorSize = metadata->Outputs[i].VectorSize
 					};

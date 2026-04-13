@@ -1755,7 +1755,6 @@ internal static partial class SDL_ShaderCross
 	{
 		public byte* Name;
 		public uint Location;
-		public uint Offset;
 		public IOVarType VectorType;
 		public uint VectorSize;
 	}

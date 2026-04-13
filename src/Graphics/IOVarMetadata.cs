@@ -19,7 +19,6 @@ public struct IOVarMetadata
 {
 	public string Name;
 	public uint Location;
-	public uint Offset;
 	public IOVarType VectorType;
 	public uint VectorSize;
 }
