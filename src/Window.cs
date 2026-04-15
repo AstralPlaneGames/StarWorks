@@ -214,6 +214,12 @@ namespace MoonWorks
 			}
 		}
 
+		public void SetTextInputArea(int x, int y, int width, int height)
+		{
+			var rect = new SDL.SDL_Rect { x = x, y = y, w = width, h = height };
+			SDL.SDL_SetTextInputArea(Handle, ref rect, 0);
+		}
+
 		internal static Window Lookup(uint windowID)
 		{
 			lock (IDToWindow)

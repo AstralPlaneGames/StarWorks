@@ -380,8 +380,22 @@ namespace MoonWorks
 						SystemEventQueue.Enqueue(evt);
 						break;
 
+					// Process text events immediately since evt.text contains
+					// pointers that may become invalid if deferred.
 					case SDL.SDL_EventType.SDL_EVENT_TEXT_INPUT:
+						HandleTextInput(evt.text);
+						break;
+
+					case SDL.SDL_EventType.SDL_EVENT_TEXT_EDITING:
+						HandleTextEditing(evt.edit);
+						break;
+
+					case SDL.SDL_EventType.SDL_EVENT_TEXT_EDITING_CANDIDATES:
+						HandleTextEditingCandidates(evt.edit_candidates);
+						break;
+
 					case SDL.SDL_EventType.SDL_EVENT_MOUSE_WHEEL:
+					case SDL.SDL_EventType.SDL_EVENT_MOUSE_MOTION:
 					case SDL.SDL_EventType.SDL_EVENT_MOUSE_BUTTON_DOWN:
 					case SDL.SDL_EventType.SDL_EVENT_MOUSE_BUTTON_UP:
 					case SDL.SDL_EventType.SDL_EVENT_GAMEPAD_BUTTON_DOWN:
@@ -389,6 +403,9 @@ namespace MoonWorks
 					case SDL.SDL_EventType.SDL_EVENT_GAMEPAD_AXIS_MOTION:
 					case SDL.SDL_EventType.SDL_EVENT_KEY_DOWN:
 					case SDL.SDL_EventType.SDL_EVENT_KEY_UP:
+					case SDL.SDL_EventType.SDL_EVENT_FINGER_DOWN:
+					case SDL.SDL_EventType.SDL_EVENT_FINGER_UP:
+					case SDL.SDL_EventType.SDL_EVENT_FINGER_MOTION:
 						InputEventQueue.Enqueue(evt);
 						break;
 				}
@@ -401,17 +418,22 @@ namespace MoonWorks
 			{
 				switch ((SDL.SDL_EventType) evt.type)
 				{
-					case SDL.SDL_EventType.SDL_EVENT_TEXT_INPUT:
-						HandleTextInput(evt.text);
-						break;
-
 					case SDL.SDL_EventType.SDL_EVENT_MOUSE_WHEEL:
 						Inputs.Mouse.WheelRaw += (int) evt.wheel.y;
+						InputEventEXT.OnMouseWheel(ref evt);
+						break;
+
+					case SDL.SDL_EventType.SDL_EVENT_MOUSE_MOTION:
+						InputEventEXT.OnMouseMove(ref evt);
 						break;
 
 					case SDL.SDL_EventType.SDL_EVENT_MOUSE_BUTTON_DOWN:
 					case SDL.SDL_EventType.SDL_EVENT_MOUSE_BUTTON_UP:
 						HandleMouseButton(evt.button);
+						if ((SDL.SDL_EventType) evt.type == SDL.SDL_EventType.SDL_EVENT_MOUSE_BUTTON_DOWN)
+							InputEventEXT.OnMouseDown(ref evt);
+						else
+							InputEventEXT.OnMouseUp(ref evt);
 						break;
 
 					case SDL.SDL_EventType.SDL_EVENT_GAMEPAD_BUTTON_DOWN:
@@ -426,6 +448,25 @@ namespace MoonWorks
 					case SDL.SDL_EventType.SDL_EVENT_KEY_DOWN:
 					case SDL.SDL_EventType.SDL_EVENT_KEY_UP:
 						HandleKeyboardButton(evt.key);
+						{
+							var keyCode = (KeyCode) evt.key.key;
+							if ((SDL.SDL_EventType) evt.type == SDL.SDL_EventType.SDL_EVENT_KEY_DOWN)
+								InputEventEXT.OnKeyDown(keyCode, ref evt);
+							else
+								InputEventEXT.OnKeyUp(keyCode, ref evt);
+						}
+						break;
+
+					case SDL.SDL_EventType.SDL_EVENT_FINGER_DOWN:
+						InputEventEXT.OnFingerDown(ref evt);
+						break;
+
+					case SDL.SDL_EventType.SDL_EVENT_FINGER_UP:
+						InputEventEXT.OnFingerUp(ref evt);
+						break;
+
+					case SDL.SDL_EventType.SDL_EVENT_FINGER_MOTION:
+						InputEventEXT.OnFingerMove(ref evt);
 						break;
 
 					default:
@@ -522,8 +563,40 @@ namespace MoonWorks
 					for (int i = 0; i < chars; i += 1)
 					{
 						Inputs.OnTextInput(charsBuffer[i]);
+						TextInputEXT.OnTextInput(charsBuffer[i]);
 					}
+
+					var str = new string(charsBuffer, 0, chars);
+					TextInputEXT.OnImeTextInput(str);
 				}
+			}
+		}
+
+		private void HandleTextEditing(SDL.SDL_TextEditingEvent evt)
+		{
+			unsafe
+			{
+				int bytes = MeasureStringLength(evt.text);
+				var text = bytes > 0
+					? Encoding.UTF8.GetString(evt.text, bytes)
+					: string.Empty;
+				TextInputEXT.OnTextEditing(text, evt.start, evt.length);
+			}
+		}
+
+		private void HandleTextEditingCandidates(SDL.SDL_TextEditingCandidatesEvent evt)
+		{
+			unsafe
+			{
+				var candidates = new string[evt.num_candidates];
+				for (int i = 0; i < evt.num_candidates; i++)
+				{
+					int bytes = MeasureStringLength(evt.candidates[i]);
+					candidates[i] = bytes > 0
+						? Encoding.UTF8.GetString(evt.candidates[i], bytes)
+						: string.Empty;
+				}
+				TextInputEXT.OnTextEditingCandidates(candidates, evt.selected_candidate, evt.horizontal);
 			}
 		}
 
