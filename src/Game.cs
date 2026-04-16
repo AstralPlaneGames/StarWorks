@@ -458,15 +458,15 @@ namespace MoonWorks
 						break;
 
 					case SDL.SDL_EventType.SDL_EVENT_FINGER_DOWN:
-						InputEventEXT.OnFingerDown(ref evt);
+						InputEventEXT.OnFingerDown(ref evt, MainWindow);
 						break;
 
 					case SDL.SDL_EventType.SDL_EVENT_FINGER_UP:
-						InputEventEXT.OnFingerUp(ref evt);
+						InputEventEXT.OnFingerUp(ref evt, MainWindow);
 						break;
 
 					case SDL.SDL_EventType.SDL_EVENT_FINGER_MOTION:
-						InputEventEXT.OnFingerMove(ref evt);
+						InputEventEXT.OnFingerMove(ref evt, MainWindow);
 						break;
 
 					default:

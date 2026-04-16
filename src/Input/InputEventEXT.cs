@@ -174,7 +174,7 @@ namespace MoonWorks.Input
 			}
 		}
 
-		internal static void OnFingerDown(ref SDL.SDL_Event evt)
+		internal static void OnFingerDown(ref SDL.SDL_Event evt, Window window)
 		{
 			_lastClickTime = DateTime.Now;
 
@@ -186,11 +186,11 @@ namespace MoonWorks.Input
 				PointerId = (int) evt.tfinger.fingerID,
 				Button = InputButton.Left,
 				Delta = Vector2.Zero,
-				Position = new Vector2(evt.tfinger.x, evt.tfinger.y)
+				Position = new Vector2((float) System.Math.Round(evt.tfinger.x * window.Width), (float) System.Math.Round(evt.tfinger.y * window.Height))
 			});
 		}
 
-		internal static void OnFingerMove(ref SDL.SDL_Event evt)
+		internal static void OnFingerMove(ref SDL.SDL_Event evt, Window window)
 		{
 			if (PointerMove == null) return;
 
@@ -199,12 +199,12 @@ namespace MoonWorks.Input
 				ClickTime = _lastClickTime,
 				PointerId = (int) evt.tfinger.fingerID,
 				Button = InputButton.Left,
-				Delta = new Vector2(evt.tfinger.dx, evt.tfinger.dy),
-				Position = new Vector2(evt.tfinger.x, evt.tfinger.y)
+				Delta = new Vector2((float) System.Math.Round(evt.tfinger.dx * window.Width), (float) System.Math.Round(evt.tfinger.dy * window.Height)),
+				Position = new Vector2((float) System.Math.Round(evt.tfinger.x * window.Width), (float) System.Math.Round(evt.tfinger.y * window.Height))
 			});
 		}
 
-		internal static void OnFingerUp(ref SDL.SDL_Event evt)
+		internal static void OnFingerUp(ref SDL.SDL_Event evt, Window window)
 		{
 			if (PointerUp == null) return;
 
@@ -214,7 +214,7 @@ namespace MoonWorks.Input
 				PointerId = (int) evt.tfinger.fingerID,
 				Button = InputButton.Left,
 				Delta = Vector2.Zero,
-				Position = new Vector2(evt.tfinger.x, evt.tfinger.y)
+				Position = new Vector2((float) System.Math.Round(evt.tfinger.x * window.Width), (float) System.Math.Round(evt.tfinger.y * window.Height))
 			});
 		}
 
